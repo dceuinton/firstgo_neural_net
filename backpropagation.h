@@ -37,6 +37,9 @@ public:
     double getError_SSE();
     int action( double *vector );
     double* testNetwork(LetterStructure testPattern);
+    double testDataset(LetterStructure* letters, int size, int startIndex, int range);
+    bool check(LetterStructure letter, double* results);
+    bool check(LetterStructure letter);
 
 private:
 

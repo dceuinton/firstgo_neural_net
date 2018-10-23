@@ -75,27 +75,7 @@ void MainWindow::on_btnReadFile_clicked()
 //    for (int i = 0; i < 2; i++) {
         QString line = in.readLine();
         letters[i] = loadLetterFromString(line);
-
-
-//        QStringList parts = line.split(",");
-//        char sym = *(parts[0].toUtf8().data());
-
-//        letters[i].symbol = Symbol(sym - 65); // 65 is 'A'
-//        for (int j = 0; j < INPUT_NEURONS; j++) {
-//            letters[i].f[j] = atoi(parts[j+1].toUtf8().data());
-//        }
-
-//        for (int j = 0; j < OUTPUT_NEURONS; j++) {
-//            letters[i].outputs[j] = 0;
-
-//            if (j == letters[i].symbol) {
-//                letters[i].outputs[j] = 1;
-//            }
-//        }
     }
-
-//    printLetter(0);
-//    printLetter(1);
 
     QString size;
     QTextStream(&size) << "Size of letters is " << sizeof(letters);
@@ -193,11 +173,28 @@ void MainWindow::on_btnClearLog_clicked()
 
     // ------------------------------------------------------
 
-//    QString word;
-//    QTextStream str(&word);
-//    str << type(ui->lcdnA);
-//    str << "\n";
-//    printMessage(word);
+    printMessage("Initializing\n");
+    double res[OUTPUT_NEURONS] = {0.1, 0.01, 0.2, 0.02, 0.023, 0.08,
+                     0.04, 0.045, 0.0001, 0.000001, 0.00002, 0.0125,
+                     0.0004, 0.000045, 0.000123, 0.0001, 0.0014, 0.000078,
+                     0.025, 5.4, 0.0250, 0.0001, 0.0014, 0.000078,
+                     0.04, 0.045, 0.0001};
+
+    printMessage("Initialized\n");
+
+    qDebug() << "Initialized";
+
+    QString word;
+    QTextStream str(&word);
+
+    qDebug() << "Stream init";
+
+    printLetter(0);
+
+    qDebug() << "letter printed";
+    str << "Test:: " << bp->check(letters[0], res) << "\nTest:: " << bp->check(letters[1], res);
+    str << "\n";
+    printMessage(word);
 }
 
 void MainWindow::on_btnTrainNetwork_clicked()
@@ -250,4 +247,12 @@ void MainWindow::on_btnTestCustomData_clicked()
         results = bp->testNetwork(letter);
         displayTestResults(results);
     }
+}
+
+void MainWindow::on_btnTestData_clicked()
+{
+    double ratioTrain = bp->testDataset(letters, NUMBER_OF_PATTERNS, 0, NUMBER_OF_TRAINING_PATTERNS);
+    ui->lcdnTrainingPercentageOfGoodClassification->display(ratioTrain*100);
+    double ratioTest = bp->testDataset(letters, NUMBER_OF_PATTERNS, NUMBER_OF_TRAINING_PATTERNS, NUMBER_OF_TEST_PATTERNS);
+    ui->lcdnTestPercentageOfGoodClassification->display(ratioTest*100);
 }

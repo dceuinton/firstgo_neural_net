@@ -555,3 +555,54 @@ void Backpropagation::backPropagate( void )
   }
 
 }
+
+double Backpropagation::testDataset(LetterStructure* letters, int size, int startIndex, int range) {
+    int correct = 0;
+
+    for (int i = startIndex; i < startIndex + range; i++) {
+        int index = i % size;
+        if (check(letters[index])) {
+            correct++;
+        }
+    }
+
+    double r = (double) range;
+
+    return (double) (correct/r);
+}
+
+bool Backpropagation::check(LetterStructure letter) {
+    double* res = testNetwork(letter);
+    check(letter, res);
+}
+
+bool Backpropagation::check(LetterStructure letter, double* results) {
+    bool ret = false;
+
+    int index = 0;
+    double highest = 0.0;
+    for (int i = 0; i < OUTPUT_NEURONS; ++i) {
+        if (results[i] > highest) {
+            highest = results[i];
+            index = i;
+        }
+    }
+
+//    debug("check() - got index");
+
+    if (letter.outputs[index] == 1) {
+        ret = true;
+    }
+
+//    debug("Printing letter:");
+//    debug(QString::fromUtf8(letter.toString().c_str()));
+
+//    QString word;
+//    QTextStream str(&word);
+//    str << "largest index: " << index;
+
+//    debug(word);
+//    debug("finished");
+
+    return ret;
+}
