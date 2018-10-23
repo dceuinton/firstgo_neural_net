@@ -1,13 +1,4 @@
 ﻿#include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include "globalvariables.h"
-#include <QtDebug>
-#include <QFile>
-#include <QTextStream>
-#include <QDataStream>
-#include <QStringList>
-#include <QByteArray>
-#include <cstdlib>
 
 QString relative_path = "/home/dale/Documents/university/ai/a2/LetterRecognition/";
 std::map<int, char> dictionary = {
@@ -25,6 +16,39 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    bp = new Backpropagation();
+    MAX_EPOCHS = 5;
+    LEARNING_RATE = 0.1;
+
+    ui->lcdnLearningRate->display(LEARNING_RATE);
+
+    displays[0] = ui->lcdnA;
+    displays[1] = ui->lcdnB;
+    displays[2] = ui->lcdnC;
+    displays[3] = ui->lcdnD;
+    displays[4] = ui->lcdnE;
+    displays[5] = ui->lcdnF;
+    displays[6] = ui->lcdnG;
+    displays[7] = ui->lcdnH;
+    displays[8] = ui->lcdnI;
+    displays[9] = ui->lcdnJ;
+    displays[10] = ui->lcdnK;
+    displays[11] = ui->lcdnL;
+    displays[12] = ui->lcdnM;
+    displays[13] = ui->lcdnN;
+    displays[14] = ui->lcdnO;
+    displays[15] = ui->lcdnP;
+    displays[16] = ui->lcdnQ;
+    displays[17] = ui->lcdnR;
+    displays[18] = ui->lcdnS;
+    displays[19] = ui->lcdnT;
+    displays[20] = ui->lcdnU;
+    displays[21] = ui->lcdnV;
+    displays[22] = ui->lcdnW;
+    displays[23] = ui->lcdnX;
+    displays[24] = ui->lcdnY;
+    displays[25] = ui->lcdnZ;
+    displays[26] = ui->lcdnUnknown;
 }
 
 MainWindow::~MainWindow()
@@ -48,15 +72,30 @@ void MainWindow::on_btnReadFile_clicked()
     QTextStream in(&datafile);
 
     for (int i = 0; i < NUMBER_OF_PATTERNS; i++) {
+//    for (int i = 0; i < 2; i++) {
         QString line = in.readLine();
-        QStringList parts = line.split(",");
-        char sym = *(parts[0].toUtf8().data());
+        letters[i] = loadLetterFromString(line);
 
-        letters[i].symbol = Symbol(sym - 65);
-        for (int j = 0; j < INPUT_NEURONS; j++) {
-            letters[i].f[j] = atoi(parts[j+1].toUtf8().data());
-        }
+
+//        QStringList parts = line.split(",");
+//        char sym = *(parts[0].toUtf8().data());
+
+//        letters[i].symbol = Symbol(sym - 65); // 65 is 'A'
+//        for (int j = 0; j < INPUT_NEURONS; j++) {
+//            letters[i].f[j] = atoi(parts[j+1].toUtf8().data());
+//        }
+
+//        for (int j = 0; j < OUTPUT_NEURONS; j++) {
+//            letters[i].outputs[j] = 0;
+
+//            if (j == letters[i].symbol) {
+//                letters[i].outputs[j] = 1;
+//            }
+//        }
     }
+
+//    printLetter(0);
+//    printLetter(1);
 
     QString size;
     QTextStream(&size) << "Size of letters is " << sizeof(letters);
@@ -79,28 +118,136 @@ void MainWindow::printLetter(int i) {
 
 void MainWindow::on_btnSaveFile_clicked()
 {
-    QString filename = ui->pteSaveFile->toPlainText();
-    printMessage("Saving to " + filename + "\n");
-    QFile outputfile(relative_path + filename);
-    outputfile.open(QIODevice::WriteOnly | QIODevice::Text);
+    if (patternsLoadedFromFile) {
+        QString filename = ui->pteSaveFile->toPlainText();
+        printMessage("Saving to " + filename + "\n");
+        QFile outputfile(relative_path + filename);
+        outputfile.open(QIODevice::WriteOnly | QIODevice::Text);
 
-    char buf[80];
-    QByteArray temp;
+        char buf[80];
+        QByteArray temp;
 
-    QTextStream out(&outputfile);
+        QTextStream out(&outputfile);
 
-    for (int i = 0; i < NUMBER_OF_PATTERNS; i++) {
-        ::sprintf(buf, "%c", dictionary[letters[i].symbol]);
-        temp.append(buf);
-
-        for (int j = 0; j < INPUT_NEURONS; j++) {
-            ::sprintf(buf, ",%d", letters[i].f[j]);
+        for (int i = 0; i < NUMBER_OF_PATTERNS; i++) {
+            ::sprintf(buf, "%c", dictionary[letters[i].symbol]);
             temp.append(buf);
+
+            for (int j = 0; j < INPUT_NEURONS; j++) {
+                ::sprintf(buf, ",%d", letters[i].f[j]);
+                temp.append(buf);
+            }
+            temp.append("\n");
         }
-        temp.append("\n");
+
+        out << temp;
+        outputfile.close();
+        printMessage("Saved.\n");
+    } else {
+        printMessage("Cannot save as no patterns were loaded.");
+    }
+}
+
+void MainWindow::on_sbMaxEpochs_valueChanged(int arg1)
+{
+    MAX_EPOCHS = arg1;
+    QString word;
+    QTextStream stream(&word);
+    stream << "Max Epochs = " << MAX_EPOCHS << "\n";
+    printMessage(word);
+}
+
+void MainWindow::on_hsLearningRate_sliderMoved(int position)
+{
+    LEARNING_RATE = position / 1000.0;
+    ui->lcdnLearningRate->display(LEARNING_RATE);
+}
+
+void MainWindow::on_btnSaveWeights_clicked()
+{
+    QString filename = ui->pteSaveWeights->toPlainText();
+    printMessage("Saving weights to " + filename + "\n");
+
+    bp->saveWeights(relative_path + filename);
+
+    printMessage("Saved weights.\n");
+}
+
+void MainWindow::on_btnClearLog_clicked()
+{
+//    printMessage("Testing");
+//    int size = 3;
+//    double sums[] = {1.0, 2.0, 3.0};
+//    double actual[size];
+
+//    bp->softmax(sums, actual, size);
+
+//    QString word;
+//    QTextStream str(&word);
+//    for (int i = 0; i < size; i++) {
+//        str << actual[i] << " ";
+//    }
+//    str << "\n";
+
+//    printMessage(word);
+
+    // ------------------------------------------------------
+
+//    QString word;
+//    QTextStream str(&word);
+//    str << type(ui->lcdnA);
+//    str << "\n";
+//    printMessage(word);
+}
+
+void MainWindow::on_btnTrainNetwork_clicked()
+{
+    if (patternsLoadedFromFile) {
+        printMessage("Started training.\n");
+        bp->trainNetwork(MAX_EPOCHS);
+        printMessage("Training complete.\n");
+    } else {
+        printMessage("Cannot train network as no patterns are loaded.");
+    }
+}
+
+LetterStructure MainWindow::loadLetterFromString(QString line) {
+    LetterStructure letter;
+    QStringList parts = line.split(",");
+    char sym = *(parts[0].toUtf8().data());
+
+    letter.symbol = Symbol(sym - 65); // 65 is 'A'
+    for (int j = 0; j < INPUT_NEURONS; j++) {
+        letter.f[j] = atoi(parts[j+1].toUtf8().data());
     }
 
-    out << temp;
-    outputfile.close();
-    printMessage("Saved.\n");
+    for (int j = 0; j < OUTPUT_NEURONS; j++) {
+        letter.outputs[j] = 0;
+
+        if (j == letter.symbol) {
+            letter.outputs[j] = 1;
+        }
+    }
+
+    return letter;
+}
+
+void MainWindow::displayTestResults(double* results) {
+    for (int i = 0; i < OUTPUT_NEURONS; i++) {
+        displays[i]->display(results[i]);
+    }
+}
+
+void MainWindow::on_btnTestCustomData_clicked()
+{
+    QString sample = ui->pteCustomData->toPlainText();
+    if (sample.size() < 33) {
+        printMessage("Problem with test data. Too short.");
+        return;
+    } else {
+        LetterStructure letter = loadLetterFromString(sample);
+        double* results;
+        results = bp->testNetwork(letter);
+        displayTestResults(results);
+    }
 }

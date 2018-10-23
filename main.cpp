@@ -14,7 +14,9 @@ double LEARNING_RATE = 0.1;
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
     patternsLoadedFromFile = false;
+
     MainWindow w;
     w.show();
 

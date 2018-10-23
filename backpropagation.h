@@ -30,6 +30,8 @@ public:
     void backPropagate();
     double sigmoid( double val );
     double sigmoidDerivative( double val );
+    void softmax(double* outputsums, double* actualvals, int size);
+    void softmax();
     void assignRandomWeights( void );
     double trainNetwork(int NUMBER_OF_DESIRED_EPOCHS);
     double getError_SSE();
@@ -37,6 +39,8 @@ public:
     double* testNetwork(LetterStructure testPattern);
 
 private:
+
+    void debug(QString message);
 
     /* Weight Structures */
 
@@ -51,6 +55,7 @@ private:
     double hidden[HIDDEN_NEURONS];
     double target[OUTPUT_NEURONS];
     double actual[OUTPUT_NEURONS];
+    double outputSums[OUTPUT_NEURONS];
 
     /* Unit Errors */
     double erro[OUTPUT_NEURONS];

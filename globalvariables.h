@@ -10,7 +10,7 @@
 
 #define INPUT_NEURONS		16
 #define HIDDEN_NEURONS		12
-#define OUTPUT_NEURONS		26
+#define OUTPUT_NEURONS		27
 
 //------------------------------------------
 
@@ -32,6 +32,10 @@ struct LetterStructure{
         s << "Symbol: " << symbol << "\n";
         for (int i = 0; i < INPUT_NEURONS; i++) {
             s << f[i] << " ";
+        }
+        s << "\n";
+        for (int i = 0; i < OUTPUT_NEURONS; i++) {
+            s << outputs[i] << " ";
         }
         s << "\n";
         return s.str();

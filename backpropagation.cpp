@@ -14,6 +14,10 @@
 
 ///////////////////////////////////////////////////////////////////
 
+void Backpropagation::debug(QString message) {
+    qDebug() << message;
+}
+
 Backpropagation::Backpropagation()
 {
    initialise();
@@ -434,6 +438,21 @@ double Backpropagation::sigmoidDerivative( double val )
   return ( val * (1.0 - val) );
 }
 
+void Backpropagation::softmax(double* sums, double* smVals, int size) {
+    double summedExp = 0.0;
+    for (int i = 0; i < size; i++) {
+        summedExp += exp(sums[i]);
+    }
+
+    for (int i = 0; i < size; i++) {
+        smVals[i] = exp(sums[i]) / summedExp;
+    }
+}
+
+void Backpropagation::softmax() {
+    softmax(outputSums, actual, OUTPUT_NEURONS);
+}
+
 
 /*
  *  feedForward()
@@ -473,9 +492,11 @@ void Backpropagation::feedForward( )
     /* Add in Bias */
     sum += who[HIDDEN_NEURONS][out];
 
-    actual[out] = sigmoid( sum );
-
+//    actual[out] = sigmoid( sum );
+    outputSums[out] = sum;
   }
+
+  softmax();
 
 }
 
@@ -493,6 +514,7 @@ void Backpropagation::backPropagate( void )
 
   /* Calculate the output layer error (step 3 for output cell) */
   for (out = 0 ; out < OUTPUT_NEURONS ; out++) {
+      // Here I leave sigmoid derivative in as derivative because the derivative is the same as softmax derivative
     erro[out] = (target[out] - actual[out]) * sigmoidDerivative( actual[out] );
   }
 

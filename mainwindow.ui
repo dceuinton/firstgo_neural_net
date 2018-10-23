@@ -133,7 +133,7 @@
         </size>
        </property>
        <property name="plainText">
-        <string>complete_data_set_saved.txt</string>
+        <string>saved_data.txt</string>
        </property>
       </widget>
      </item>
@@ -1854,7 +1854,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>699</width>
+           <width>598</width>
            <height>20</height>
           </size>
          </property>
@@ -1883,7 +1883,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>150</width>
+           <width>250</width>
            <height>45</height>
           </size>
          </property>
@@ -1910,9 +1910,15 @@
         <widget class="QSlider" name="hsLearningRate">
          <property name="maximumSize">
           <size>
-           <width>150</width>
+           <width>250</width>
            <height>25</height>
           </size>
+         </property>
+         <property name="maximum">
+          <number>999</number>
+         </property>
+         <property name="value">
+          <number>100</number>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
