@@ -153,10 +153,6 @@ double* Backpropagation::testNetwork(LetterStructure testPattern){
 }
 
 double* Backpropagation::testNetwork(LetterStructure testPattern, double &error) {
-//    //retrieve input patterns
-//    for(int j=0; j < INPUT_NEURONS; j++){
-//       inputs[j] = testPattern.f[j];
-//    }
     setInputs(testPattern);
 
     for(int i=0; i < OUTPUT_NEURONS; i++){
@@ -504,4 +500,62 @@ void Backpropagation::setInputs(LetterStructure letter) {
         inputs[i] = letter.f[i]/range;                // Here we normalize it so we have inputs in range 0->1
 //        inputs[i] = letter.f[i];
     }
+}
+
+int Backpropagation::getClassification(double* out) {
+    int index = 0;
+    double highest = 0.0;
+    for (int i = 0; i < OUTPUT_NEURONS; ++i) {
+        if (out[i] > highest) {
+            highest = out[i];
+            index = i;
+        }
+    }
+    return index;
+}
+
+int Backpropagation::getClassification(int* out) {
+    int index = 0;
+    double highest = 0.0;
+    for (int i = 0; i < OUTPUT_NEURONS; ++i) {
+        if (out[i] > highest) {
+            highest = out[i];
+            index = i;
+        }
+    }
+    return index;
+}
+
+void Backpropagation::writeConfusionMatrix(QString filename) {
+    qDebug() << "Writing confusion matrix";
+
+    QFile file(filename);
+    file.open(QIODevice::WriteOnly | QIODevice::Text);
+
+    QTextStream fStream(&file);
+
+    int cm[OUTPUT_NEURONS][OUTPUT_NEURONS];
+
+    for (int rs = 0; rs < OUTPUT_NEURONS; rs++) {
+        for (int cs = 0; cs < OUTPUT_NEURONS; cs++) {
+            cm[rs][cs] = 0;
+        }
+    }
+
+    for (int i = NUMBER_OF_TRAINING_PATTERNS; i < NUMBER_OF_TRAINING_PATTERNS + NUMBER_OF_TEST_PATTERNS; i++) {
+        int row = getClassification(letters[i].outputs);
+        int col = getClassification(testNetwork(letters[i]));
+        cm[row][col]++;
+    }
+
+    for (int rs = 0; rs < OUTPUT_NEURONS; rs++) {
+        for (int cs = 0; cs < OUTPUT_NEURONS; cs++) {
+            fStream << cm[rs][cs] << ",";
+        }
+        fStream << "\n";
+    }
+
+    file.close();
+
+    qDebug() << "Confusion matrix saved to " << filename;
 }

@@ -59,6 +59,8 @@ private slots:
 
     void on_btnSaveRelativePath_clicked();
 
+    void on_btnSaveTestDataConfusionMatrix_clicked();
+
 private:
     Ui::MainWindow *ui;
     Backpropagation *bp;

@@ -51,6 +51,10 @@ public:
 
     void setInputs(LetterStructure letter);
 
+    void writeConfusionMatrix(QString filename);
+    int getClassification(double* out);
+    int getClassification(int* out);
+
 private:
 
     void debug(QString message);

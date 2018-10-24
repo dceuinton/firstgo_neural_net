@@ -310,3 +310,10 @@ void MainWindow::on_btnSaveRelativePath_clicked()
     relative_path = ui->pteRelativePath->toPlainText();
     printMessage("Changed relative path to " + relative_path + "\n");
 }
+
+void MainWindow::on_btnSaveTestDataConfusionMatrix_clicked()
+{
+    QString filename = ui->pteConfusionMatrix->toPlainText();
+    bp->writeConfusionMatrix(relative_path + filename);
+    printMessage("Wrote confusion matrix to " + filename + "\n");
+}
