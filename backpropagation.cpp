@@ -29,6 +29,8 @@ void Backpropagation::initialise()
     sample=0;
     iterations=0;
     sum = 0;
+    train_mse = 0.0;
+    test_mse = 0.0;
 
 
     /* Seed the random number generator */
@@ -330,6 +332,25 @@ double* Backpropagation::testNetwork(LetterStructure testPattern){
 
 }
 
+double* Backpropagation::testNetwork(LetterStructure testPattern, double &error) {
+    //retrieve input patterns
+    for(int j=0; j < INPUT_NEURONS; j++){
+       inputs[j] = testPattern.f[j];
+    }
+
+    for(int i=0; i < OUTPUT_NEURONS; i++){
+        target[i] = testPattern.outputs[i];
+    }
+
+    feedForward();
+
+    for (int i = 0; i < OUTPUT_NEURONS; i++) {
+        error += sqr(actual[i] - target[i]);
+    }
+
+    return actual;
+}
+
 
 double Backpropagation::trainNetwork(int NUMBER_OF_DESIRED_EPOCHS)
 {
@@ -558,6 +579,7 @@ void Backpropagation::backPropagate( void )
 
 double Backpropagation::testDataset(LetterStructure* letters, int size, int startIndex, int range) {
     int correct = 0;
+//    double mse = 0.0;
 
     for (int i = startIndex; i < startIndex + range; i++) {
         int index = i % size;
@@ -573,6 +595,11 @@ double Backpropagation::testDataset(LetterStructure* letters, int size, int star
 
 bool Backpropagation::check(LetterStructure letter) {
     double* res = testNetwork(letter);
+    check(letter, res);
+}
+
+bool Backpropagation::check(LetterStructure letter, double &error) {
+    double* res = testNetwork(letter, error);
     check(letter, res);
 }
 
@@ -605,4 +632,44 @@ bool Backpropagation::check(LetterStructure letter, double* results) {
 //    debug("finished");
 
     return ret;
+}
+
+double Backpropagation::testTrainingData() {
+    train_mse = 0.0;
+    int correct = 0;
+
+    for (int i = 0; i < NUMBER_OF_TRAINING_PATTERNS; i++) {
+        if (check(letters[i], train_mse)) {
+            correct++;
+        }
+    }
+
+    train_mse /= NUMBER_OF_TRAINING_PATTERNS;
+
+    double total = (double) NUMBER_OF_TRAINING_PATTERNS;
+    return (double) (correct/total);
+}
+
+double Backpropagation::testTestData() {
+    test_mse = 0.0;
+    int correct = 0;
+
+    for (int i = NUMBER_OF_TRAINING_PATTERNS; i < NUMBER_OF_TRAINING_PATTERNS + NUMBER_OF_TEST_PATTERNS; i++) {
+        if (check(letters[i], test_mse)) {
+            correct++;
+        }
+    }
+
+    test_mse /= NUMBER_OF_TEST_PATTERNS;
+
+    double total = (double) NUMBER_OF_TEST_PATTERNS;
+    return (double) (correct/total);
+}
+
+double Backpropagation::getTrainMSE() {
+    return train_mse;
+}
+
+double Backpropagation::getTestMSE() {
+    return test_mse;
 }

@@ -48,7 +48,9 @@ private slots:
 
     void on_btnTestCustomData_clicked();
 
-    void on_btnTestData_clicked();
+    void on_btnTestNetwork_clicked();
+
+    void on_btnInitialiseNetwork_clicked();
 
 private:
     Ui::MainWindow *ui;

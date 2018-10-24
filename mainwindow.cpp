@@ -1,6 +1,6 @@
 ﻿#include "mainwindow.h"
 
-QString relative_path = "/home/dale/Documents/university/ai/a2/LetterRecognition/";
+QString relative_path = "/home/dale/Documents/ai/a2/LetterRecognition/";
 std::map<int, char> dictionary = {
 {0, 'A'}, {1, 'B'}, {2, 'C'}, {3, 'D'},
 {4, 'E'}, {5, 'F'}, {6, 'G'}, {7, 'H'},
@@ -249,10 +249,17 @@ void MainWindow::on_btnTestCustomData_clicked()
     }
 }
 
-void MainWindow::on_btnTestData_clicked()
+void MainWindow::on_btnTestNetwork_clicked()
 {
-    double ratioTrain = bp->testDataset(letters, NUMBER_OF_PATTERNS, 0, NUMBER_OF_TRAINING_PATTERNS);
+    double ratioTrain = bp->testTrainingData();
     ui->lcdnTrainingPercentageOfGoodClassification->display(ratioTrain*100);
-    double ratioTest = bp->testDataset(letters, NUMBER_OF_PATTERNS, NUMBER_OF_TRAINING_PATTERNS, NUMBER_OF_TEST_PATTERNS);
+    ui->lcdnTrainingSumOfSquaredErrors->display(bp->getTrainMSE());
+    double ratioTest = bp->testTestData();
     ui->lcdnTestPercentageOfGoodClassification->display(ratioTest*100);
+    ui->lcdnTestSumOfSquaredErrors->display(bp->getTestMSE());
+}
+
+void MainWindow::on_btnInitialiseNetwork_clicked()
+{
+    bp->initialise();
 }

@@ -37,9 +37,17 @@ public:
     double getError_SSE();
     int action( double *vector );
     double* testNetwork(LetterStructure testPattern);
+    double* testNetwork(LetterStructure testPattern, double &error);
     double testDataset(LetterStructure* letters, int size, int startIndex, int range);
     bool check(LetterStructure letter, double* results);
     bool check(LetterStructure letter);
+    bool check(LetterStructure letter, double &error);
+
+    double testTrainingData();
+    double testTestData();
+
+    double getTrainMSE();
+    double getTestMSE();
 
 private:
 
@@ -65,7 +73,7 @@ private:
     double errh[HIDDEN_NEURONS];
 
     //-----------------------------------------
-    double err;
+    double err, train_mse, test_mse;
     int i, sample, iterations;
     int sum;
 };

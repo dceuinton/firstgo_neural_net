@@ -9,7 +9,7 @@
 //------------------------------------------
 
 #define INPUT_NEURONS		16
-#define HIDDEN_NEURONS		12
+#define HIDDEN_NEURONS		100
 #define OUTPUT_NEURONS		27
 
 //------------------------------------------
