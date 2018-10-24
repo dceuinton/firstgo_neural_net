@@ -57,6 +57,8 @@ private slots:
 
     void on_btnLoadWeights_clicked();
 
+    void on_btnSaveRelativePath_clicked();
+
 private:
     Ui::MainWindow *ui;
     Backpropagation *bp;

@@ -201,7 +201,29 @@ void MainWindow::on_btnTrainNetwork_clicked()
 {
     if (patternsLoadedFromFile) {
         qDebug() << "Training started";
-        bp->trainNetwork(MAX_EPOCHS);
+        int total = MAX_EPOCHS;
+        int step = 10;
+        int left = total;
+        int running_total = 0;
+
+        while (left > 0) {
+            left -= step;
+
+            if (left < 0) {
+                step += left;
+            }
+
+            running_total += step;
+
+            bp->trainNetwork(step);
+
+            QString base = ui->pteSaveWeights->toPlainText().split(".")[0];
+            QString filename;
+            QTextStream str(&filename);
+            str << base << "_" << running_total << ".txt";
+            bp->saveWeights(relative_path + filename);
+        }
+
         printMessage("Training complete.\n");
     } else {
         printMessage("Cannot train network as no patterns are loaded.");
@@ -281,4 +303,10 @@ void MainWindow::on_btnLoadWeights_clicked()
     bp->loadWeights(relative_path + filename);
 
     printMessage("Weights loaded.\n");
+}
+
+void MainWindow::on_btnSaveRelativePath_clicked()
+{
+    relative_path = ui->pteRelativePath->toPlainText();
+    printMessage("Changed relative path to " + relative_path + "\n");
 }
