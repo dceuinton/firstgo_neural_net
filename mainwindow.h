@@ -13,6 +13,7 @@
 #include <QStringList>
 #include <QByteArray>
 #include <cstdlib>
+#include <algorithm>
 
 namespace Ui {
 class MainWindow;
@@ -51,6 +52,8 @@ private slots:
     void on_btnTestNetwork_clicked();
 
     void on_btnInitialiseNetwork_clicked();
+
+    void on_btnShuffleTrainingData_clicked();
 
 private:
     Ui::MainWindow *ui;

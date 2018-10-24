@@ -307,11 +307,13 @@ int Backpropagation::action( double *vector )
 }
 
 double* Backpropagation::testNetwork(LetterStructure testPattern){
-    //retrieve input patterns
-    for(int j=0; j < INPUT_NEURONS; j++){
-       inputs[j] = testPattern.f[j];
-//       qDebug() << "f[" << j << "] = " << inputs[j];
-    }
+//    //retrieve input patterns
+//    for(int j=0; j < INPUT_NEURONS; j++){
+//       inputs[j] = testPattern.f[j];
+// //       qDebug() << "f[" << j << "] = " << inputs[j];
+//    }
+
+    setInputs(testPattern);
 
     for(int i=0; i < OUTPUT_NEURONS; i++){
         target[i] = testPattern.outputs[i];
@@ -333,10 +335,11 @@ double* Backpropagation::testNetwork(LetterStructure testPattern){
 }
 
 double* Backpropagation::testNetwork(LetterStructure testPattern, double &error) {
-    //retrieve input patterns
-    for(int j=0; j < INPUT_NEURONS; j++){
-       inputs[j] = testPattern.f[j];
-    }
+//    //retrieve input patterns
+//    for(int j=0; j < INPUT_NEURONS; j++){
+//       inputs[j] = testPattern.f[j];
+//    }
+    setInputs(testPattern);
 
     for(int i=0; i < OUTPUT_NEURONS; i++){
         target[i] = testPattern.outputs[i];
@@ -370,10 +373,11 @@ double Backpropagation::trainNetwork(int NUMBER_OF_DESIRED_EPOCHS)
             epochs++;
         }
 
-        //retrieve input patterns
-        for(int j=0; j < INPUT_NEURONS; j++){
-           inputs[j] = letters[sample].f[j];
-        }
+//        //retrieve input patterns
+//        for(int j=0; j < INPUT_NEURONS; j++){
+//           inputs[j] = letters[sample].f[j];
+//        }
+        setInputs(letters[sample]);
 
         for(int i=0; i < OUTPUT_NEURONS; i++){
             target[i] = letters[sample].outputs[i];
@@ -672,4 +676,14 @@ double Backpropagation::getTrainMSE() {
 
 double Backpropagation::getTestMSE() {
     return test_mse;
+}
+
+void Backpropagation::setInputs(LetterStructure letter) {
+
+    double range = 15;
+
+    for (int i = 0; i < INPUT_NEURONS; i++) {
+        inputs[i] = letter.f[i]/range;                // Here we normalize it so we have inputs in range 0->1
+//        inputs[i] = letter.f[i];
+    }
 }

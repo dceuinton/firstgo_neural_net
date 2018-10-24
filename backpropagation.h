@@ -49,6 +49,8 @@ public:
     double getTrainMSE();
     double getTestMSE();
 
+    void setInputs(LetterStructure letter);
+
 private:
 
     void debug(QString message);

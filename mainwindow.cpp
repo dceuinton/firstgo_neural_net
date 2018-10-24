@@ -200,7 +200,7 @@ void MainWindow::on_btnClearLog_clicked()
 void MainWindow::on_btnTrainNetwork_clicked()
 {
     if (patternsLoadedFromFile) {
-        printMessage("Started training.\n");
+        qDebug() << "Training started";
         bp->trainNetwork(MAX_EPOCHS);
         printMessage("Training complete.\n");
     } else {
@@ -262,4 +262,13 @@ void MainWindow::on_btnTestNetwork_clicked()
 void MainWindow::on_btnInitialiseNetwork_clicked()
 {
     bp->initialise();
+    printMessage("Initialised.\n");
+}
+
+void MainWindow::on_btnShuffleTrainingData_clicked()
+{
+    if (patternsLoadedFromFile) {
+        std::random_shuffle(&letters[0], &letters[NUMBER_OF_PATTERNS]);
+        printMessage("Shuffled.\n");
+    }
 }
