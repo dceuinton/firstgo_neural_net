@@ -277,6 +277,42 @@ double Backpropagation::sigmoidDerivative( double val )
   return ( val * (1.0 - val) );
 }
 
+double Backpropagation::relu(double val) {
+    if (val < 0) {
+        return 0.0;
+    } else {
+        return val;
+    }
+}
+
+double Backpropagation::reluDerivative(double val) {
+    if (val < 0) {
+        return 0.0;
+    } else {
+        return 1.0;
+    }
+}
+
+double Backpropagation::hyperbolicTan(double val) {
+    return tanh(val);
+}
+
+double Backpropagation::hyperbolicTanDerivative(double val) {
+    return (1 - sqr(tanh(val)));
+}
+
+double Backpropagation::activationFunction(double val) {
+    return sigmoid(val);
+//    return relu(val);
+//    return hyperbolicTan(val);
+}
+
+double Backpropagation::activationFunctionDerivative(double val) {
+    return sigmoidDerivative(val);
+//    return reluDerivative(val);
+//    return hyperbolicTanDerivative(val);
+}
+
 void Backpropagation::softmax(double* sums, double* smVals, int size) {
     double summedExp = 0.0;
     for (int i = 0; i < size; i++) {
@@ -316,7 +352,7 @@ void Backpropagation::feedForward( )
     /* Add in Bias */
     sum += wih[INPUT_NEURONS][hid];
 
-    hidden[hid] = sigmoid( sum );
+    hidden[hid] = activationFunction( sum );
 
   }
 
@@ -331,7 +367,6 @@ void Backpropagation::feedForward( )
     /* Add in Bias */
     sum += who[HIDDEN_NEURONS][out];
 
-//    actual[out] = sigmoid( sum );
     outputSums[out] = sum;
   }
 
@@ -365,7 +400,7 @@ void Backpropagation::backPropagate( void )
       errh[hid] += erro[out] * who[hid][out];
     }
 
-    errh[hid] *= sigmoidDerivative( hidden[hid] );
+    errh[hid] *= activationFunctionDerivative( hidden[hid] );
 
   }
 

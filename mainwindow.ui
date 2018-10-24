@@ -194,7 +194,7 @@
         </size>
        </property>
        <property name="plainText">
-        <string>weights_96.txt</string>
+        <string>sig_saved_weights.txt</string>
        </property>
       </widget>
      </item>

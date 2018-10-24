@@ -55,6 +55,14 @@ public:
     int getClassification(double* out);
     int getClassification(int* out);
 
+    double relu(double val);
+    double reluDerivative(double val);
+    double hyperbolicTan(double val);
+    double hyperbolicTanDerivative(double val);
+
+    double activationFunction(double val);
+    double activationFunctionDerivative(double val);
+
 private:
 
     void debug(QString message);
