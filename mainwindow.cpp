@@ -272,3 +272,13 @@ void MainWindow::on_btnShuffleTrainingData_clicked()
         printMessage("Shuffled.\n");
     }
 }
+
+void MainWindow::on_btnLoadWeights_clicked()
+{
+    QString filename = ui->pteLoadWeights->toPlainText();
+    qDebug() << "Loading weights from " << filename;
+
+    bp->loadWeights(relative_path + filename);
+
+    printMessage("Weights loaded.\n");
+}

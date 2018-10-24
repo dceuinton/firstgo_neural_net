@@ -55,6 +55,8 @@ private slots:
 
     void on_btnShuffleTrainingData_clicked();
 
+    void on_btnLoadWeights_clicked();
+
 private:
     Ui::MainWindow *ui;
     Backpropagation *bp;

@@ -123,171 +123,239 @@ double Backpropagation::getError_SSE(){
 
 
 
-void Backpropagation::saveWeights(QString fileName){
-    int out, hid, inp;
+//void Backpropagation::saveWeights(QString fileName){
+//    int out, hid, inp;
 
-    QFile file3(fileName);
-    file3.open(QIODevice::WriteOnly | QIODevice::Text);
+//    QFile file3(fileName);
+//    file3.open(QIODevice::WriteOnly | QIODevice::Text);
 
-    QTextStream out3(&file3);
+//    QTextStream out3(&file3);
 
-    char tempBuffer3[80];
-    QByteArray temp3;
+//    char tempBuffer3[80];
+//    QByteArray temp3;
 
-    //----------------------------------------------
-    // weights
-    //
+//    //----------------------------------------------
+//    // weights
+//    //
 
-    qDebug() << "updating weights...";
-    qDebug() << "OUTPUT_NEURONS = " << OUTPUT_NEURONS;
-    qDebug() << "HIDDEN_NEURONS = " << HIDDEN_NEURONS;
-    qDebug() << "INPUT_NEURONS = " << INPUT_NEURONS;
+//    qDebug() << "updating weights...";
+//    qDebug() << "OUTPUT_NEURONS = " << OUTPUT_NEURONS;
+//    qDebug() << "HIDDEN_NEURONS = " << HIDDEN_NEURONS;
+//    qDebug() << "INPUT_NEURONS = " << INPUT_NEURONS;
 
-    // Update the weights for the output layer (step 4 for output cell)
-    for (out = 0 ; out < OUTPUT_NEURONS ; out++) {
-      temp3.clear();
-      for (hid = 0 ; hid < HIDDEN_NEURONS ; hid++) {
-          //---save------------------------------------
+//    // Update the weights for the output layer (step 4 for output cell)
+//    for (out = 0 ; out < OUTPUT_NEURONS ; out++) {
+//      temp3.clear();
+//      for (hid = 0 ; hid < HIDDEN_NEURONS ; hid++) {
+//          //---save------------------------------------
 
 
-            ::sprintf(tempBuffer3,"%f,",who[hid][out]);
-            temp3.append(tempBuffer3);
+//            ::sprintf(tempBuffer3,"%f,",who[hid][out]);
+//            temp3.append(tempBuffer3);
 
-          //---------------------------------------
-      }
+//          //---------------------------------------
+//      }
 
-      // Update the Bias
-      //---save------------------------------------
-        ::sprintf(tempBuffer3,"%f",who[HIDDEN_NEURONS][out]);
-        temp3.append(tempBuffer3);
-        temp3.append("\n");
-        out3 << temp3;
+//      // Update the Bias
+//      //---save------------------------------------
+//        ::sprintf(tempBuffer3,"%f",who[HIDDEN_NEURONS][out]);
+//        temp3.append(tempBuffer3);
+//        temp3.append("\n");
+//        out3 << temp3;
 
-      //---------------------------------------
+//      //---------------------------------------
 
+//    }
+
+//    // Update the weights for the hidden layer (step 4 for hidden cell)
+//    for (hid = 0 ; hid < HIDDEN_NEURONS ; hid++) {
+//      temp3.clear();
+//      for (inp = 0 ; inp < INPUT_NEURONS ; inp++) {
+
+//        //---save------------------------------------
+
+
+//          ::sprintf(tempBuffer3,"%f,",wih[inp][hid]);
+//          temp3.append(tempBuffer3);
+
+//        //---------------------------------------
+//      }
+
+//      // Update the Bias
+//      //---save------------------------------------
+//        ::sprintf(tempBuffer3,"%f",wih[INPUT_NEURONS][hid]);
+//        temp3.append(tempBuffer3);
+//        temp3.append("\n");
+//        out3 << temp3;
+
+//      //---------------------------------------
+
+//    }
+
+//    //----------------------------------------------
+
+
+//    file3.close();
+//    qDebug() << "Weights saved to file.";
+//}
+
+void Backpropagation::saveWeights(QString filename) {
+    qDebug() << "Saving weights to " << filename;
+    QFile file(filename);
+    file.open(QIODevice::WriteOnly | QIODevice::Text);
+
+    QTextStream output(&file);
+
+    // Saving the weights for the output layer
+    for (int out = 0; out < OUTPUT_NEURONS; out++) {
+        for (int hid = 0; hid < HIDDEN_NEURONS; hid++) {
+            output << who[hid][out] << ",";
+        }
+        // Save the bias
+        output << who[HIDDEN_NEURONS][out] << "\n";
     }
 
-    // Update the weights for the hidden layer (step 4 for hidden cell)
-    for (hid = 0 ; hid < HIDDEN_NEURONS ; hid++) {
-      temp3.clear();
-      for (inp = 0 ; inp < INPUT_NEURONS ; inp++) {
-
-        //---save------------------------------------
-
-
-          ::sprintf(tempBuffer3,"%f,",wih[inp][hid]);
-          temp3.append(tempBuffer3);
-
-        //---------------------------------------
-      }
-
-      // Update the Bias
-      //---save------------------------------------
-        ::sprintf(tempBuffer3,"%f",wih[INPUT_NEURONS][hid]);
-        temp3.append(tempBuffer3);
-        temp3.append("\n");
-        out3 << temp3;
-
-      //---------------------------------------
-
+    // Save the input - hidden layer weights
+    for (int hid = 0; hid < HIDDEN_NEURONS; hid++) {
+        for (int inp = 0; inp < INPUT_NEURONS; inp++) {
+            output << wih[inp][hid] << ",";
+        }
+        // Save the bias
+        output << wih[INPUT_NEURONS][hid] << "\n";
     }
 
-    //----------------------------------------------
-
-
-    file3.close();
-    qDebug() << "Weights saved to file.";
+    file.close();
+    qDebug() << "Weights saved!";
 }
 
+void Backpropagation::loadWeights(QString filename) {
+    qDebug() << "Loading weights from " << filename;
+    QFile file(filename);
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
 
-void Backpropagation::loadWeights(QString fileName){
-    int out, hid, inp;
-
-    QFile file3(fileName);
-    file3.open(QIODevice::ReadOnly | QIODevice::Text);
-
-    if(!file3.exists()){
-        qDebug() << "Backpropagation::loadWeights-file does not exist!";
+    if (!file.exists()) {
+        qDebug() << "ERROR! loadWeights - File doesn't exist.";
         return;
     }
 
-    QTextStream in(&file3);
+    QTextStream in(&file);
+    QString line;
 
-    char tChar;
-    char tempBuffer3[80];
-    QByteArray temp3;
-
-    //----------------------------------------------
-    // weights
-    //
-
-    QString strLine;
-    //QTextStream streamLine;
-
-
-
-    qDebug() << "loading weights...";
-    qDebug() << "OUTPUT_NEURONS = " << OUTPUT_NEURONS;
-    qDebug() << "HIDDEN_NEURONS = " << HIDDEN_NEURONS;
-    qDebug() << "INPUT_NEURONS = " << INPUT_NEURONS;
-
-    // Update the weights for the output layer (step 4 for output cell)
-    for (out = 0 ; out < OUTPUT_NEURONS ; out++) {
-      strLine = in.readLine();
-      QTextStream streamLine(&strLine);
-
-      for (hid = 0 ; hid <= HIDDEN_NEURONS ; hid++) {
-          //---load------------------------------------
-
-            if(hid != HIDDEN_NEURONS-1){
-               streamLine >> who[hid][out] >> tChar;
-            } else {
-               streamLine >> who[hid][out];
-            }
-
-
-          //---------------------------------------
-      }
-
-      // Update the Bias
-      //---load------------------------------------
-
-        streamLine >> who[HIDDEN_NEURONS][out];// >> tChar;
-
-
-      //---------------------------------------
-
+    // Loading weights for hidden - output layers and bias
+    for (int out = 0; out < OUTPUT_NEURONS; out++) {
+        line = in.readLine();
+        QStringList parts = line.split(",");
+        for (int hid = 0; hid <= HIDDEN_NEURONS; hid++) {
+            who[hid][out] = parts[hid].toDouble();
+        }
     }
 
-    /* Update the weights for the hidden layer (step 4 for hidden cell) */
-    for (hid = 0 ; hid < HIDDEN_NEURONS ; hid++) {
-
-      for (inp = 0 ; inp < INPUT_NEURONS ; inp++) {
-
-        //---load------------------------------------
-          if(hid != INPUT_NEURONS-1){
-             in >> wih[inp][hid] >> tChar;
-          } else {
-             in >> wih[inp][hid];
-          }
-
-        //---------------------------------------
-      }
-
-      // Update the Bias
-      //---load------------------------------------
-        in >> wih[INPUT_NEURONS][hid] >> tChar;
-
-      //---------------------------------------
-
+    // Loading the weights for the input - hidden layers and bias
+    for (int hid = 0; hid < HIDDEN_NEURONS; hid++) {
+        line = in.readLine();
+        QStringList parts = line.split(",");
+        for (int inp = 0; inp <= INPUT_NEURONS; inp++) {
+            wih[inp][hid] = parts[inp].toDouble();
+        }
     }
 
-    //----------------------------------------------
-
-
-    file3.close();
+    file.close();
     qDebug() << "Weights loaded.";
 }
+
+//void Backpropagation::loadWeights(QString fileName){
+//    int out, hid, inp;
+
+//    QFile file3(fileName);
+//    file3.open(QIODevice::ReadOnly | QIODevice::Text);
+
+//    if(!file3.exists()){
+//        qDebug() << "Backpropagation::loadWeights-file does not exist!";
+//        return;
+//    }
+
+//    QTextStream in(&file3);
+
+//    char tChar;
+//    char tempBuffer3[80];
+//    QByteArray temp3;
+
+//    //----------------------------------------------
+//    // weights
+//    //
+
+//    QString strLine;
+//    //QTextStream streamLine;
+
+
+
+//    qDebug() << "loading weights...";
+//    qDebug() << "OUTPUT_NEURONS = " << OUTPUT_NEURONS;
+//    qDebug() << "HIDDEN_NEURONS = " << HIDDEN_NEURONS;
+//    qDebug() << "INPUT_NEURONS = " << INPUT_NEURONS;
+
+//    // Update the weights for the output layer (step 4 for output cell)
+//    for (out = 0 ; out < OUTPUT_NEURONS ; out++) {
+//      strLine = in.readLine();
+//      QTextStream streamLine(&strLine);
+
+//      for (hid = 0 ; hid <= HIDDEN_NEURONS ; hid++) {
+//          //---load------------------------------------
+
+////            if(hid != HIDDEN_NEURONS-1){
+////               streamLine >> who[hid][out] >> tChar;
+////            } else {
+////               streamLine >> who[hid][out];
+////            }
+//          streamLine >> who[hid][out] >> tChar;
+
+
+//          //---------------------------------------
+//      }
+
+//      // Update the Bias
+//      //---load------------------------------------
+
+//        streamLine >> who[HIDDEN_NEURONS][out];// >> tChar;
+
+
+//      //---------------------------------------
+
+//    }
+
+//    /* Update the weights for the hidden layer (step 4 for hidden cell) */
+//    for (hid = 0 ; hid < HIDDEN_NEURONS ; hid++) {
+//      strLine = in.readLine();
+//      QTextStream streamLine(&strLine);
+//      for (inp = 0 ; inp < INPUT_NEURONS ; inp++) {
+
+//        //---load------------------------------------
+////          if(hid != INPUT_NEURONS-1){
+////             in >> wih[inp][hid] >> tChar;
+////          } else {
+////             in >> wih[inp][hid];
+////          }
+
+//          streamLine >> wih[inp][hid] >> tChar;
+
+//        //---------------------------------------
+//      }
+
+//      // Update the Bias
+//      //---load------------------------------------
+////        in >> wih[INPUT_NEURONS][hid] >> tChar;
+//      streamLine >> wih[INPUT_NEURONS][hid];
+
+//      //---------------------------------------
+
+//    }
+
+//    //----------------------------------------------
+
+
+//    file3.close();
+//    qDebug() << "Weights loaded.";
+//}
 
 int Backpropagation::action( double *vector )
 {
