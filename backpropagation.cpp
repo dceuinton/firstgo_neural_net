@@ -302,15 +302,15 @@ double Backpropagation::hyperbolicTanDerivative(double val) {
 }
 
 double Backpropagation::activationFunction(double val) {
-    return sigmoid(val);
+//    return sigmoid(val);
 //    return relu(val);
-//    return hyperbolicTan(val);
+    return hyperbolicTan(val);
 }
 
 double Backpropagation::activationFunctionDerivative(double val) {
-    return sigmoidDerivative(val);
+//    return sigmoidDerivative(val);
 //    return reluDerivative(val);
-//    return hyperbolicTanDerivative(val);
+    return hyperbolicTanDerivative(val);
 }
 
 void Backpropagation::softmax(double* sums, double* smVals, int size) {
